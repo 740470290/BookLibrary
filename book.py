@@ -91,7 +91,7 @@ def reader_login():
         if user is None:
             error = 'Invalid username'
         elif check_password_hash(user['pwd'], request.form['password']):
-            error = 'Invalid password12'
+            error = 'Invalid password'
         else:
             session['user_id'] = user['user_name']
             return redirect(url_for('reader'))
@@ -113,8 +113,8 @@ def register():
         else:
             db = get_db()
             db.execute('''insert into users (user_name, pwd, college, num, email) \
-				values (?, ?, ?, ?, ?) ''', [request.form['username'], generate_password_hash(
-                request.form['password']), request.form['college'], request.form['number'],
+				values (?, ?, ?, ?, ?) ''', [request.form['username'],
+                request.form['password'], request.form['college'], request.form['number'],
                                              request.form['email']])
             db.commit()
             return redirect(url_for('reader_login'))
@@ -392,14 +392,14 @@ def reader_book(id):
     return render_template('reader_book.html', book=book, reader=reader, error=error)
 
 
-@app.route('/reader/histroy', methods=['GET', 'POST'])
-def reader_histroy():
+@app.route('/reader/history', methods=['GET', 'POST'])
+def reader_history():
     reader_judge()
     historys = query_db(
         '''select * from historys, books where historys.book_id = books.book_id and historys.user_name=? ''', [g.user],
         one=False)
 
-    return render_template('reader_histroy.html', historys=historys)
+    return render_template('reader_history.html', historys=historys)
 
 
 if __name__ == '__main__':
